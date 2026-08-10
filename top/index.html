@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ビールジョッキ進捗メーター＆チャリティ情報</title>
+  <style>
+
+    /* ヘッダーコンテナの設定 */
+    .header-container {
+      width: 572px;
+      height: 160px;
+      margin-bottom: 0; /* ジョッキとの間の余白（お好みで調整してください） */
+      line-height: 0;
+    }
+
+    .header-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain; /* 画像の縦横比を崩さず綺麗に納めます */
+    }
+
+    /* 画面全体の基本設定 */
+    body {
+      margin: 0;
+      padding: 20px 0;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+      box-sizing: border-box;
+    }
+
+    /* ジョッキの上の黄色い横長情報ボード */
+    .info-board {
+      position: absolute;          /* ★追加：枠内基準の絶対配置 */
+      top: 50px;                   /* ★追加：キャンバス上端から30px */
+      left: 50%;                   /* ★追加：左右中央寄せ */
+      transform: translateX(-50%);  /* ★追加：左右中央寄せ */
+      width: 500px;                /* ★変更：幅を500pxに設定 */
+      background-color: #f8c72d;
+      color: #1e293b;
+      border-radius: 16px;
+      padding: 16px 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      box-sizing: border-box;
+      text-align: center;
+      z-index: 2000;               /* ★一番手前（ロゴや星の演出よりも上） */
+    }
+
+    /* キャンペーン期間（一番上に配置） */
+    .campaign-period {
+      font-size: 18px;
+      font-weight: bold;
+      color: #334155;
+      margin-bottom: 2px;
+    }
+
+    /* 目標金額（控えめな表示） */
+    .target-amount-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    /* 現在の寄付金額ボックス（Flexで中央＆横並び揃え） */
+    .current-amount-box {
+      display: flex;
+      justify-content: center;
+      align-items: baseline; /* テキストのベースラインを揃える */
+      gap: 4px;              /* 文字間の余白 */
+      margin-top: 2px;
+    }
+
+    /* ラベル（現在の寄付総額：） */
+    .current-amount-label {
+      font-size: 18px;
+      font-weight: bold;
+      color: #dc2626;
+    }
+
+    /* 金額の数値 */
+    .current-amount-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: #dc2626;
+      line-height: 1;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+    }
+
+    /* 単位（円） */
+    .current-amount-unit {
+      font-size: 20px;
+      font-weight: bold;
+      color: #dc2626;
+    }
+
+    /* ビールジョッキのキャンバス枠（w572 x h1024） */
+    #beer-container {
+      width: 572px;
+      height: 1024px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 重ね合わせる共通スタイル */
+    .beer-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 572px;
+      height: 1024px;
+      pointer-events: none;
+    }
+
+    /* 1層目（一番奥）：空ジョッキ画像 */
+    .beer-empty {
+      z-index: 1;
+    }
+
+    /* 2層目（真ん中）：満杯画像（切り抜きで進捗率分だけ表示） */
+    .beer-full-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 572px;
+      height: 1024px;
+      z-index: 2;
+      clip-path: inset(766px 0 258px 0);
+      transition: clip-path 3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .beer-full-wrapper img {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 3層目（手前）：ロゴ画像（全画面サイズで重ね合わせ） */
+    .beer-logo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 572px;
+      height: 1024px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* --- 子どもの画像の配置設定 --- */
+    .kid-img {
+      position: absolute;
+      height: auto;
+      z-index: 15;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    /* ジョッキの周り（左右に3人ずつ）の配置座標 */
+    .kid1 { width: 20%; top: 280px; left: 45px; transform: rotate(-15deg) }   /* 左上 */
+    .kid2 { width: 20%; top: 480px; left: 30px; transform: rotate(10deg) }   /* 左中 */
+    .kid3 { width: 18%; top: 660px; left: 60px; transform: rotate(-8deg) }   /* 左下 */
+
+    .kid4 { width: 20%; top: 280px; right: 65px; transform: rotate(15deg) }  /* 右上 */
+    .kid5 { width: 19%; top: 470px; right: 30px; transform: rotate(-10deg) }  /* 右中 */
+    .kid6 { width: 16%; top: 650px; right: 60px; transform: rotate(12deg) }  /* 右下 */
+
+    /* 主役の大きな黄色い星（50px） */
+    #main-star {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      font-size: 50px;
+      line-height: 50px;
+      text-align: center;
+      color: #ffee55;
+      text-shadow: 0 0 15px #ffaa00, 0 0 25px #ff8800;
+      pointer-events: none;
+      z-index: 1000;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    /* 追いかける魔法の粉（ピクシーダスト） */
+    .star-dust {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #fffbeb;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px #fde047, 0 0 14px #eab308;
+      opacity: 0;
+    }
+
+/* チャリティ説明コンテナ（ジョッキ画像の上に重ねて配置） */
+    .description-container {
+      position: absolute;
+      bottom: 10px;                /* ジョッキ枠の底から25px上に配置 */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 530px;                /* 黄色いボードと同じ幅に統一 */
+      background-color: rgba(255, 255, 255, 0.92); /* 文字が見やすい少し透けた白背景 */
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 10px 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+      color: #1e293b;
+      z-index: 100;                /* ビールやロゴより手前に表示 */
+    }
+
+    /* 見出しタイトル */
+    .description-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #0f172a;
+      margin: 0 0 10px 0;
+      text-align: center;
+      position: relative;
+      padding-bottom: 6px;
+    }
+
+    /* タイトルの下の黄色の下線アクセント */
+    .description-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 3px;
+      background-color: #eab308;
+      border-radius: 2px;
+    }
+
+    /* 本文 */
+    .description-text {
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0;
+      color: #334155;
+      text-align: justify;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダーコンテナ -->
+  <div class="header-container">
+    <img src="hed.png" alt="ヘッダー" class="header-image">
+  </div>
+
+  <!-- ジョッキ＆演出コンテナ -->
+  <div id="beer-container">
+
+    <div class="info-board">
+      <!-- キャンペーン期間 -->
+      <div class="campaign-period">キャンペーン期間 2026.10.1～2027.2.28</div>      
+      <!-- 目標金額 -->
+      <div class="target-amount-label">目標金額：<span id="displayTargetAmount">4,500,000</span>円</div>      
+      <!-- 現在の寄付総額（横並び配置） -->
+      <div class="current-amount-box">
+        <span class="current-amount-label">現在の寄付総額：</span>
+        <span class="current-amount-value" id="displayCurrentAmount">1,000,000</span>
+        <span class="current-amount-unit">円</span>
+      </div>
+    </div>
+
+    <!-- 1. 奥：空のジョッキ -->
+    <img src="beermug_empty.webp" alt="空のジョッキ" class="beer-image beer-empty">
+
+    <!-- 2. 中：満杯のビール -->
+    <div class="beer-full-wrapper" id="beerFullWrapper">
+      <img src="beermug_full.webp" alt="満杯のビール">
+    </div>
+
+    <!-- 3. 手前：ロゴ画像 -->
+    <img src="beermug_rogo.png" alt="ロゴ" class="beer-logo">
+
+    <!-- 子どもの画像（6人分） -->
+    <img src="kid1.png" alt="子ども1" class="kid-img kid1">
+    <img src="kid2.png" alt="子ども2" class="kid-img kid2">
+    <img src="kid3.png" alt="子ども3" class="kid-img kid3">
+    <img src="kid4.png" alt="子ども4" class="kid-img kid4">
+    <img src="kid5.png" alt="子ども5" class="kid-img kid5">
+    <img src="kid6.png" alt="子ども6" class="kid-img kid6">
+
+<!-- 【移動】ジョッキの上に重ねて表示する説明文章 -->
+    <div class="description-container">
+      <h2 class="description-title">ハッピーリングチャリティとは</h2>
+      <p class="description-text">
+        当キャンペーンは東海三県の飲食店様へ業務用食品・酒類を販売している㈱マルト水谷により開催されています。お取引先の飲食店様と共に地域の未来を担う子ども達の悩みや不安を解消し、ひとりでも多くの子どもに笑顔を届けたい。私たちが飲食店で提供している生ビールが地域の子ども食堂や子どもの問題解決に取り組む団体を通じて子ども達の支援へとつながります。
+      </p>
+    </div>
+
+    <!-- 4. 最手前：演出用の星 -->
+    <div id="main-star">★</div>
+  </div>
+
+  <script>
+  // =========================================================
+  // 【設定エリア】運用時は以下の数値を書き換えてください
+  // =========================================================
+  const CURRENT_AMOUNT     = 1234567; // 現在の寄付金額（数値のみ）
+  const TARGET_AMOUNT      = 4500000; // 目標金額（数値のみ）
+  const ANIMATION_SECONDS  = 2.0;     // ★演出の全体時間（秒単位：2.0秒や1.5秒に変更可能）
+  
+  // 目標進捗（％）
+  const TARGET_PERCENT = (CURRENT_AMOUNT / TARGET_AMOUNT) * 100;
+  // =========================================================
+
+  // パラメータ定義
+  const LOGO_X = 275;
+  const LOGO_Y = 538;
+  const DUST_COUNT = 20;
+
+  const mainStar = document.getElementById('main-star');
+  const container = document.getElementById('beer-container');
+  const wrapper = document.getElementById('beerFullWrapper');
+  
+  let dustParticles = [];
+  let animationFrameId = null;
+
+  // 初期化：目標金額をセット
+  document.getElementById('displayTargetAmount').textContent = TARGET_AMOUNT.toLocaleString('ja-JP');
+
+  // ピクシーダスト初期生成
+  for (let i = 0; i < DUST_COUNT; i++) {
+    const dust = document.createElement('div');
+    dust.classList.add('star-dust');
+    const scale = 1 - (i / DUST_COUNT) * 0.7;
+    dust.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    container.appendChild(dust);
+    
+    dustParticles.push({
+      element: dust,
+      x: LOGO_X,
+      y: LOGO_Y
+    });
+  }
+
+  /**
+   * ビールの高さを設定する関数
+   */
+  function setBeerProgress(percent) {
+    let p = parseFloat(percent);
+    if (isNaN(p)) p = 0;
+    if (p < 0) p = 0;
+    if (p > 100) p = 100;
+
+    const y0 = 766;      // 0% のY座標
+    const y100 = 265;    // 100% (フチ) のY座標
+    const yFoamTop = 0;  // あふれた泡のてっぺんY座標
+    const totalHeight = 1024;
+
+    let currentY;
+    if (p >= 100) {
+      currentY = yFoamTop;
+    } else {
+      currentY = y0 - ((y0 - y100) * (p / 100));
+    }
+
+    const topClip = currentY;
+    const bottomClip = totalHeight - y0;
+
+    wrapper.style.clipPath = `inset(${topClip}px 0px ${bottomClip}px 0px)`;
+  }
+
+  /**
+   * 現在の寄付金額を下1桁から順番に表示する演出関数
+   */
+  function animateCurrentAmount() {
+    const amountContainer = document.getElementById('displayCurrentAmount');
+    const formattedStr = CURRENT_AMOUNT.toLocaleString('ja-JP');
+
+    amountContainer.innerHTML = '';
+    
+    const spanElements = formattedStr.split('').map(char => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.style.display = 'inline-block';
+      span.style.opacity = '0';
+      span.style.transform = 'scale(0.3)';
+      span.style.transition = 'opacity 0.15s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      amountContainer.appendChild(span);
+      return span;
+    });
+
+    const reversedSpans = [...spanElements].reverse();
+    
+    // 設定した ANIMATION_SECONDS（ミリ秒換算）に合わせて間隔を自動調整
+    const totalDurationMs = ANIMATION_SECONDS * 1000;
+    const interval = totalDurationMs / reversedSpans.length;
+
+    reversedSpans.forEach((span, index) => {
+      setTimeout(() => {
+        span.style.opacity = '1';
+        span.style.transform = 'scale(1)';
+      }, index * interval);
+    });
+  }
+
+  /**
+   * 星のアニメーション関数
+   */
+  function startStarAnimation() {
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+    const startTime = performance.now();
+    mainStar.style.display = 'block';
+
+    const startAngle = 135 * (Math.PI / 180);
+    const startRadius = 380; 
+
+    const initX = LOGO_X + startRadius * Math.cos(startAngle);
+    const initY = LOGO_Y + startRadius * Math.sin(startAngle);
+    
+    dustParticles.forEach(d => {
+      d.x = initX;
+      d.y = initY;
+      d.element.style.opacity = '1';
+    });
+
+    const animDurationMs = ANIMATION_SECONDS * 1000;
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      let progress = elapsed / animDurationMs;
+
+      if (progress > 1) progress = 1;
+
+      const currentRadius = startRadius * Math.pow(1 - progress, 1.2);
+      const currentAngle = startAngle + (progress * 780 * (Math.PI / 180));
+
+      const starX = LOGO_X + currentRadius * Math.cos(currentAngle);
+      const starY = LOGO_Y + currentRadius * Math.sin(currentAngle);
+
+      let scale = 1;
+      let opacity = 1;
+      if (progress > 0.8) {
+        const fadeProgress = (progress - 0.8) / 0.2;
+        scale = 1 - fadeProgress;
+        opacity = 1 - fadeProgress;
+      }
+
+      mainStar.style.left = starX + 'px';
+      mainStar.style.top = starY + 'px';
+      mainStar.style.opacity = opacity;
+      mainStar.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${progress * 360}deg)`;
+
+      let targetX = starX;
+      let targetY = starY;
+
+      dustParticles.forEach((dust, index) => {
+        dust.x += (targetX - dust.x) * 0.28;
+        dust.y += (targetY - dust.y) * 0.28;
+
+        dust.element.style.left = dust.x + 'px';
+        dust.element.style.top = dust.y + 'px';
+        dust.element.style.opacity = opacity * (1 - index / DUST_COUNT);
+
+        targetX = dust.x;
+        targetY = dust.y;
+      });
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(update);
+      } else {
+        mainStar.style.display = 'none';
+        dustParticles.forEach(d => d.element.style.opacity = '0');
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(update);
+  }
+
+  /**
+   * ページアクセス時の自動アニメーション実行
+   */
+  function runFullAnimation() {
+    wrapper.style.transition = 'none';
+    setBeerProgress(0);
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        // ビール、星、数字すべて ANIMATION_SECONDS の秒数で一括連動
+        wrapper.style.transition = `clip-path ${ANIMATION_SECONDS}s cubic-bezier(0.25, 1, 0.4, 1)`;
+        setBeerProgress(TARGET_PERCENT);
+        startStarAnimation();
+        animateCurrentAmount();
+      }, 50);
+    });
+  }
+
+  // 画像の全読み込みを待たずにDOM生成完了の最速タイミングでスタート
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(runFullAnimation, 100);
+  });
+</script>
+</body>
+</html>
