@@ -17,16 +17,16 @@
       min-height: 100vh;
       font-family: sans-serif;
       box-sizing: border-box;
-      overflow-x: hidden; /* スマホでの横スクロールを防止 */
+      overflow-x: hidden;
     }
 
-    /* ★全要素を包むレスポンシブ・スケーラー（スマホ画面幅に合わせて自動縮小） */
+    /* ★全要素を包むレスポンシブ・スケーラー */
     .app-scaler {
       width: 572px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transform-origin: top center; /* 上部中央を基準に自動スケーリング */
+      transform-origin: top center;
     }
 
     /* ヘッダーコンテナの設定 */
@@ -69,7 +69,6 @@
       z-index: 2000;
     }
 
-    /* キャンペーン期間 */
     .campaign-period {
       font-size: 18px;
       font-weight: bold;
@@ -77,7 +76,6 @@
       margin-bottom: 2px;
     }
 
-    /* 目標金額 */
     .target-amount-label {
       font-size: 14px;
       font-weight: bold;
@@ -85,7 +83,6 @@
       margin-bottom: 6px;
     }
 
-    /* 現在の寄付金額ボックス */
     .current-amount-box {
       display: flex;
       justify-content: center;
@@ -94,14 +91,12 @@
       margin-top: 2px;
     }
 
-    /* ラベル */
     .current-amount-label {
       font-size: 18px;
       font-weight: bold;
       color: #dc2626;
     }
 
-    /* 金額の数値 */
     .current-amount-value {
       font-size: 36px;
       font-weight: 900;
@@ -110,14 +105,12 @@
       text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
     }
 
-    /* 単位 */
     .current-amount-unit {
       font-size: 20px;
       font-weight: bold;
       color: #dc2626;
     }
 
-    /* 重ね合わせる共通スタイル */
     .beer-image {
       position: absolute;
       top: 0;
@@ -127,12 +120,10 @@
       pointer-events: none;
     }
 
-    /* 1層目（一番奥）：空ジョッキ画像 */
     .beer-empty {
       z-index: 1;
     }
 
-    /* 2層目（真ん中）：満杯画像 */
     .beer-full-wrapper {
       position: absolute;
       top: 0;
@@ -149,7 +140,6 @@
       height: 100%;
     }
 
-    /* 3層目（手前）：ロゴ画像 */
     .beer-logo {
       position: absolute;
       top: 0;
@@ -169,7 +159,6 @@
       transform-origin: center center;
     }
 
-    /* ジョッキの周り（左右に3人ずつ）の配置座標 */
     .kid1 { width: 20%; top: 280px; left: 45px; transform: rotate(-15deg); }
     .kid2 { width: 20%; top: 480px; left: 30px; transform: rotate(10deg); }
     .kid3 { width: 18%; top: 660px; left: 60px; transform: rotate(-8deg); }
@@ -177,6 +166,60 @@
     .kid4 { width: 20%; top: 280px; right: 65px; transform: rotate(15deg); }
     .kid5 { width: 19%; top: 470px; right: 30px; transform: rotate(-10deg); }
     .kid6 { width: 16%; top: 650px; right: 60px; transform: rotate(12deg); }
+
+    /* 【追加】kid1の右側に表示する吹き出しコンテナ */
+    .speech-bubble-wrapper {
+      position: absolute;
+      top: 260px;          /* kid1（top:280px）の位置に合わせて配置 */
+      left: 145px;         /* kid1の右隣の位置 */
+      width: 150px;        /* 吹き出しの横幅 */
+      height: 120px;       /* 吹き出しの高さ */
+      z-index: 20;         /* 子どもより前面に表示 */
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* 吹き出しがパッと表示される状態 */
+    .speech-bubble-wrapper.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* 吹き出し背景画像 */
+    .speech-bubble-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* 吹き出し内のテキスト（中央揃え） */
+    .speech-bubble-text {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85%;
+      text-align: center;
+      color: #1e293b;
+      font-weight: bold;
+      line-height: 1.25;
+    }
+
+    .speech-bubble-text .top-label {
+      display: block;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    .speech-bubble-text .bottom-percent {
+      display: block;
+      font-size: 22px;
+      font-weight: 900;
+      color: #dc2626; /* 強調の赤色 */
+      margin-top: 2px;
+    }
 
     /* チャリティ説明コンテナ */
     .description-container {
@@ -195,9 +238,8 @@
       z-index: 100;
     }
 
-    /* 見出しタイトル */
     .description-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       color: #0f172a;
       margin: 0 0 10px 0;
@@ -206,7 +248,6 @@
       padding-bottom: 6px;
     }
 
-    /* タイトルの下の黄色の下線アクセント */
     .description-title::after {
       content: '';
       position: absolute;
@@ -219,16 +260,14 @@
       border-radius: 2px;
     }
 
-    /* 本文 */
     .description-text {
-      font-size: 17px;
+      font-size: 13px;
       line-height: 1.6;
       margin: 0;
       color: #334155;
       text-align: justify;
     }
 
-    /* 主役の大きな黄色い星（50px） */
     #main-star {
       position: absolute;
       width: 50px;
@@ -244,7 +283,6 @@
       display: none;
     }
 
-    /* 追いかける魔法の粉（ピクシーダスト） */
     .star-dust {
       position: absolute;
       width: 10px;
@@ -261,7 +299,7 @@
 </head>
 <body>
 
-  <!-- ★全体を自動で縮小フィットさせるスケーラー要素 -->
+  <!-- ★全体を自動縮小するレスポンシブ・スケーラー -->
   <div class="app-scaler" id="appScaler">
 
     <!-- ヘッダーコンテナ -->
@@ -273,11 +311,8 @@
     <div id="beer-container">
 
       <div class="info-board">
-        <!-- キャンペーン期間 -->
         <div class="campaign-period">キャンペーン期間 2026.10.1～2027.2.28</div>     
-        <!-- 目標金額 -->
         <div class="target-amount-label">目標金額：<span id="displayTargetAmount">4,500,000</span>円</div>     
-        <!-- 現在の寄付総額（横並び配置） -->
         <div class="current-amount-box">
           <span class="current-amount-label">現在の寄付総額：</span>
           <span class="current-amount-value" id="displayCurrentAmount">1,000,000</span>
@@ -304,7 +339,16 @@
       <img src="kid5.png" alt="子ども5" class="kid-img kid5">
       <img src="kid6.png" alt="子ども6" class="kid-img kid6">
 
-      <!-- ジョッキの上に重ねて表示する説明文章 -->
+      <!-- 【追加】kid1の右側に表示される吹き出し -->
+      <div class="speech-bubble-wrapper" id="speechBubble">
+        <img src="hukidashi.png" alt="吹き出し" class="speech-bubble-img">
+        <div class="speech-bubble-text">
+          <span class="top-label">目標金額の</span>
+          <span class="bottom-percent" id="bubblePercentVal">0%</span>
+        </div>
+      </div>
+
+      <!-- チャリティ説明コンテナ -->
       <div class="description-container">
         <h2 class="description-title">ハッピーリングチャリティとは</h2>
         <p class="description-text">
@@ -324,13 +368,12 @@
     // =========================================================
     const CURRENT_AMOUNT     = 1234567; // 現在の寄付金額（数値のみ）
     const TARGET_AMOUNT      = 4500000; // 目標金額（数値のみ）
-    const ANIMATION_SECONDS  = 2.0;     // 演出の全体時間（秒）
+    const ANIMATION_SECONDS  = 2.0;     // 演出時間（秒）
     
     // 目標進捗（％）
     const TARGET_PERCENT = (CURRENT_AMOUNT / TARGET_AMOUNT) * 100;
     // =========================================================
 
-    // パラメータ定義
     const LOGO_X = 275;
     const LOGO_Y = 538;
     const DUST_COUNT = 20;
@@ -344,19 +387,16 @@
     let animationFrameId = null;
 
     /**
-     * 【自動調整関数】画面幅（スマホ画面など）に合わせて全体をピッタリ自動で縮小・フィットさせる処理
+     * スマホ画面幅に合わせて自動縮小フィットさせる処理
      */
     function autoScaleApp() {
       const BASE_WIDTH = 572;
       const windowWidth = window.innerWidth;
-      const padding = 16; // 左右の余白
+      const padding = 16;
 
       if (windowWidth < BASE_WIDTH) {
-        // 画面幅に納まるように倍率（スケール）を計算
         const scale = (windowWidth - padding) / BASE_WIDTH;
         scaler.style.transform = `scale(${scale})`;
-        
-        // 縮小によって生じる高さを自動計算してスクロール位置を綺麗に調整
         const scaledHeight = (160 + 1024) * scale;
         document.body.style.height = `${scaledHeight + 30}px`;
       } else {
@@ -365,12 +405,15 @@
       }
     }
 
-    // 画面サイズ変更（スマホの回転等）にも自動追従
     window.addEventListener('resize', autoScaleApp);
-    autoScaleApp(); // 初回実行
+    autoScaleApp();
 
-    // 初期化：目標金額をセット
+    // 初期化：目標金額＆吹き出しの％数値をセット
     document.getElementById('displayTargetAmount').textContent = TARGET_AMOUNT.toLocaleString('ja-JP');
+    
+    // ％表記の算出（端数は小数第1位まで表記。整数の場合は整数表示）
+    const displayPercentStr = (Math.round(TARGET_PERCENT * 10) / 10) + '%';
+    document.getElementById('bubblePercentVal').textContent = displayPercentStr;
 
     // ピクシーダスト初期生成
     for (let i = 0; i < DUST_COUNT; i++) {
@@ -524,15 +567,27 @@
      * ページアクセス時の自動アニメーション実行
      */
     function runFullAnimation() {
+      const bubble = document.getElementById('speechBubble');
+      
+      // 吹き出しを一旦非表示リセット
+      bubble.classList.remove('show');
+
       wrapper.style.transition = 'none';
       setBeerProgress(0);
 
       requestAnimationFrame(() => {
         setTimeout(() => {
+          // ビール、星、金額のアニメーション同時スタート
           wrapper.style.transition = `clip-path ${ANIMATION_SECONDS}s cubic-bezier(0.25, 1, 0.4, 1)`;
           setBeerProgress(TARGET_PERCENT);
           startStarAnimation();
           animateCurrentAmount();
+
+          // ★アニメーション時間が終了したタイミング（ANIMATION_SECONDS 秒後）で吹き出しをポップ表示
+          setTimeout(() => {
+            bubble.classList.add('show');
+          }, ANIMATION_SECONDS * 1000);
+
         }, 50);
       });
     }
