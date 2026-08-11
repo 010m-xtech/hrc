@@ -3,51 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>スマホ・PC対応ページ</title>
+  <title>トラック演出＆コマ表示</title>
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4; /* 背景色 */
-    }
-
-    /* --- 全体の枠組み（PC時の幅制限と中央寄せ） --- */
-    .wrapper {
-      max-width: 600px;  /* PC時の最大横幅（好みで変更可） */
-      margin: 0 auto;    /* 画面中央に配置 */
-      background-color: #ffffff; /* コンテンツ背景を白にする場合 */
       box-sizing: border-box;
     }
 
-    /* --- 一番上のヘッダー画像 --- */
-    .header-image img {
+    body {
+      background-color: #f4f4f4;
+      font-family: sans-serif;
+    }
+
+    /* --- 全体の枠組み（スマホ・PC両対応） --- */
+    .wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden; /* 横スクロールバーの発生を防止 */
+    }
+
+    /* --- トラックが走るヘッダーエリア --- */
+    .truck-stage {
+      position: relative;
       width: 100%;
+      height: 140px;          /* トラックエリアの高さ */
+      background-color: #eee; /* ステージの背景色（透明にするなら transparent） */
+      overflow: hidden;      /* 画面外のトラックを隠す */
+      border-bottom: 2px solid #ddd;
+    }
+
+    /* 走るトラック画像 */
+    .truck {
+      position: absolute;
+      bottom: 10px;           /* 下からの位置 */
+      left: 50%;              /* 中央基準 */
+      width: 160px;           /* トラックの横幅（調整可） */
       height: auto;
-      display: block;
+      transform: translateX(100vw); /* 初期位置は右の画面外 */
+      
+      /* アニメーション名 / 時間(3.5秒) / イージング / 終了位置をキープ */
+      animation: truckDrive 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    /* --- トラックの走行アニメーション --- */
+    @keyframes truckDrive {
+      /* 1. 右外からスタート */
+      0% {
+        transform: translateX(100vw);
+      }
+      /* 2. 左外へ勢いよく通り過ぎる */
+      35% {
+        transform: translateX(-100vw);
+      }
+      /* 3. 見えない間に右外へ瞬間移動 */
+      35.1% {
+        transform: translateX(100vw);
+      }
+      /* 4. 再びやってきて中央に到着 */
+      80% {
+        transform: translateX(-50%);
+      }
+      /* 5. ブレーキの反動で少し前にのめる */
+      88% {
+        transform: translateX(-54%);
+      }
+      /* 6. 中央でピタッと停止 */
+      100% {
+        transform: translateX(-50%);
+      }
     }
 
     /* --- コマ画像エリア --- */
     .image-container {
-      padding: 16px;     /* 左右・上下の余白 */
-      box-sizing: border-box;
+      padding: 16px;
     }
 
     .image-container img {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 8px; /* 角丸（不要なら削除） */
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- PC時に横幅を揃えるラッパー -->
   <div class="wrapper">
 
-    <!-- ヘッダー画像 -->
-    <header class="header-image">
-      <img src="hed.png" alt="ヘッダー画像">
+    <!-- トラック演出ヘッダー -->
+    <header class="truck-stage">
+      <img src="truck.png" alt="トラック" class="truck">
     </header>
 
     <!-- コマ画像 -->
