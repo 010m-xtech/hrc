@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- スマホ表示に必須のメタタグ -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ハピチャリ4コマ</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4; /* 背景色（好みで変更可） */
+    }
 
+    /* 画像を囲むコンテナ（ここで左右の余白を制御） */
+    .image-container {
+      padding: 16px;       /* 上下左右の余白（16pxを自由に変更） */
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center; /* 左右中央寄せ */
+    }
+
+    /* 画像自体のスタイル */
+    .image-container img {
+      width: 100%;         /* コンテナ幅に合わせて拡大・縮小 */
+      max-width: 600px;    /* PCなど大画面で広がりすぎない上限幅 */
+      height: auto;        /* アスペクト比を維持 */
+      display: block;
+      border-radius: 8px;  /* 角を少し丸める場合（不要なら削除） */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="image-container">
+    <img src="koma.png" alt="コマ画像">
+  </div>
+
+</body>
+</html>
