@@ -29,66 +29,48 @@
     .truck-stage {
       position: relative;
       width: 100%;
-      height: 200px;      /* 調整可 */
+      height: 200px;
       background-color: #ffffff;
-      overflow: hidden;   /* 画面外のトラックを隠す */
+      overflow: hidden;
       border-bottom: 2px solid #ddd;
     }
 
-    /* --- [追加] 背景ロゴのスタイル --- */
+    /* --- 背景ロゴ（最初から常時表示） --- */
     .background-logo {
       position: absolute;
-      top: 50%;           /* 縦中央基準 */
-      left: 50%;          /* 横中央基準 */
-      
-      /* ★サイズ指定：ここをお好みの大きさに調整してください */
-      width: 200px;       /* 例：横幅200px。トラックより少し大きくすると見栄えが良いです */
-      height: auto;       /* 比率維持 */
-      
-      /* 中央寄せの微調整と、初期状態は透明 */
+      top: 50%;
+      left: 50%;
+      width: 200px; /* サイズ調整可 */
+      height: auto;
       transform: translate(-50%, -50%);
-      opacity: 0;
-      
-      /* ロゴの重ね順：トラックより後ろ(下)にする */
-      z-index: 1;
-      
-      /* アニメーション：1秒待機(トラックが走り出す) + トラックが左に消えるタイミング(約1.2秒)でフェードイン開始 */
-      /* アニメーション名(fadeIn) / 時間(1s) / タイミング(ease) / 遅延(計2.2s) / 状態キープ */
-      animation: fadeIn 1s ease 2.2s forwards;
+      z-index: 1;   /* トラックの背面に配置 */
     }
 
-    /* 走るトラック画像 */
+    /* --- 走るトラック画像 --- */
     .truck {
       position: absolute;
       bottom: 5px;
       left: 50%;
-      width: 160px;       /* 調整可 */
+      width: 160px; /* サイズ調整可 */
       height: auto;
-      transform: translateX(100vw);
-      
-      /* トラックの重ね順：ロゴより手前(上)にする */
+      transform: translateX(100vw); /* 初期状態は右の画面外 */
       z-index: 2;
       
-      /* アニメーション（1秒待機、3.5秒かけて走行） */
-      animation: truckDrive 4.0s cubic-bezier(0.25, 1, 0.5, 1) 1s forwards;
+      /* 1秒待機後、1.8秒かけて右から中央へ到着 */
+      animation: truckDrive 1.8s cubic-bezier(0.25, 1, 0.5, 1) 1s forwards;
     }
 
-    /* --- アニメーション定義 --- */
-
-    /* [追加] ロゴのフェードイン */
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translate(-50%, -45%); } /* 少し下からフワッと */
-      100% { opacity: 1; transform: translate(-50%, -50%); }
-    }
-
-    /* トラックの走行（前回と同じ） */
+    /* トラックの走行アニメーション（1回のみ・中央でブレーキ） */
     @keyframes truckDrive {
-      0% { transform: translateX(100vw); }
-      35% { transform: translateX(-100vw); } /* 1回目：左に消える */
-      35.1% { transform: translateX(100vw); }
-      80% { transform: translateX(-50%); }     /* 2回目：中央へ */
-      88% { transform: translateX(-54%); }     /* ブレーキ */
-      100% { transform: translateX(-50%); }
+      0% {
+        transform: translateX(100vw);
+      }
+      85% {
+        transform: translateX(-54%); /* ブレーキの反動 */
+      }
+      100% {
+        transform: translateX(-50%); /* 中央でピタッと停止 */
+      }
     }
 
     /* コマ画像エリア */
@@ -110,10 +92,10 @@
 
     <!-- トラック・ロゴ演出ヘッダー -->
     <header class="truck-stage">
-      <!-- [追加] 背景ロゴ (truck.pngより先に書く必要はありませんが、z-indexで制御しています) -->
+      <!-- 常時表示される背景ロゴ -->
       <img src="rogo.png" alt="ロゴ" class="background-logo">
       
-      <!-- 走るトラック -->
+      <!-- 右から走ってくるトラック -->
       <img src="truck.png" alt="トラック" class="truck">
     </header>
 
