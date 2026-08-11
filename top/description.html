@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>トラック演出＆コマ表示</title>
+  <title>トラック演出＆ロゴ＆コマ表示</title>
   <style>
     * {
       margin: 0;
@@ -16,66 +16,82 @@
       font-family: sans-serif;
     }
 
-    /* --- 全体の枠組み（スマホ・PC両対応） --- */
+    /* 全体の枠組み */
     .wrapper {
       max-width: 600px;
       margin: 0 auto;
       background-color: #ffffff;
       min-height: 100vh;
-      overflow-x: hidden; /* 横スクロールバーの発生を防止 */
+      overflow-x: hidden;
     }
 
-    /* --- トラックが走るヘッダーエリア --- */
+    /* トラックとロゴが配置されるヘッダーエリア */
     .truck-stage {
       position: relative;
       width: 100%;
-      height: 180px;          /* トラックエリアの高さ */
-      overflow: hidden;      /* 画面外のトラックを隠す */
+      height: 140px;      /* 調整可 */
+      background-color: #eee;
+      overflow: hidden;   /* 画面外のトラックを隠す */
       border-bottom: 2px solid #ddd;
+    }
+
+    /* --- [追加] 背景ロゴのスタイル --- */
+    .background-logo {
+      position: absolute;
+      top: 50%;           /* 縦中央基準 */
+      left: 50%;          /* 横中央基準 */
+      
+      /* ★サイズ指定：ここをお好みの大きさに調整してください */
+      width: 200px;       /* 例：横幅200px。トラックより少し大きくすると見栄えが良いです */
+      height: auto;       /* 比率維持 */
+      
+      /* 中央寄せの微調整と、初期状態は透明 */
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      
+      /* ロゴの重ね順：トラックより後ろ(下)にする */
+      z-index: 1;
+      
+      /* アニメーション：1秒待機(トラックが走り出す) + トラックが左に消えるタイミング(約1.2秒)でフェードイン開始 */
+      /* アニメーション名(fadeIn) / 時間(1s) / タイミング(ease) / 遅延(計2.2s) / 状態キープ */
+      animation: fadeIn 1s ease 2.2s forwards;
     }
 
     /* 走るトラック画像 */
     .truck {
       position: absolute;
-      bottom: 10px;           /* 下からの位置 */
-      left: 50%;              /* 中央基準 */
-      width: 180px;           /* トラックの横幅（調整可） */
+      bottom: 10px;
+      left: 50%;
+      width: 160px;       /* 調整可 */
       height: auto;
-      transform: translateX(100vw); /* 初期位置は右の画面外 */
+      transform: translateX(100vw);
       
-      /* アニメーション名 / 時間(3.5秒) / イージング / 終了位置をキープ */
-      animation: truckDrive 4.5s cubic-bezier(0.25, 1, 0.5, 1) 1s forwards;
+      /* トラックの重ね順：ロゴより手前(上)にする */
+      z-index: 2;
+      
+      /* アニメーション（1秒待機、3.5秒かけて走行） */
+      animation: truckDrive 3.5s cubic-bezier(0.25, 1, 0.5, 1) 1s forwards;
     }
 
-    /* --- トラックの走行アニメーション --- */
+    /* --- アニメーション定義 --- */
+
+    /* [追加] ロゴのフェードイン */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translate(-50%, -45%); } /* 少し下からフワッと */
+      100% { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    /* トラックの走行（前回と同じ） */
     @keyframes truckDrive {
-      /* 1. 右外からスタート */
-      0% {
-        transform: translateX(100vw);
-      }
-      /* 2. 左外へ勢いよく通り過ぎる */
-      35% {
-        transform: translateX(-100vw);
-      }
-      /* 3. 見えない間に右外へ瞬間移動 */
-      35.1% {
-        transform: translateX(100vw);
-      }
-      /* 4. 再びやってきて中央に到着 */
-      80% {
-        transform: translateX(-50%);
-      }
-      /* 5. ブレーキの反動で少し前にのめる */
-      88% {
-        transform: translateX(-54%);
-      }
-      /* 6. 中央でピタッと停止 */
-      100% {
-        transform: translateX(-50%);
-      }
+      0% { transform: translateX(100vw); }
+      35% { transform: translateX(-100vw); } /* 1回目：左に消える */
+      35.1% { transform: translateX(100vw); }
+      80% { transform: translateX(-50%); }     /* 2回目：中央へ */
+      88% { transform: translateX(-54%); }     /* ブレーキ */
+      100% { transform: translateX(-50%); }
     }
 
-    /* --- コマ画像エリア --- */
+    /* コマ画像エリア */
     .image-container {
       padding: 16px;
     }
@@ -92,8 +108,12 @@
 
   <div class="wrapper">
 
-    <!-- トラック演出ヘッダー -->
+    <!-- トラック・ロゴ演出ヘッダー -->
     <header class="truck-stage">
+      <!-- [追加] 背景ロゴ (truck.pngより先に書く必要はありませんが、z-indexで制御しています) -->
+      <img src="rogo.png" alt="ロゴ" class="background-logo">
+      
+      <!-- 走るトラック -->
       <img src="truck.png" alt="トラック" class="truck">
     </header>
 
