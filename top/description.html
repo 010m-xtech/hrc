@@ -2,56 +2,60 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- スマホ表示に必須のメタタグ -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>スマホページ</title>
+  <title>スマホ・PC対応ページ</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4; /* 背景色（好みで変更可） */
+      background-color: #f4f4f4; /* 背景色 */
+    }
+
+    /* --- 全体の枠組み（PC時の幅制限と中央寄せ） --- */
+    .wrapper {
+      max-width: 600px;  /* PC時の最大横幅（好みで変更可） */
+      margin: 0 auto;    /* 画面中央に配置 */
+      background-color: #ffffff; /* コンテンツ背景を白にする場合 */
+      box-sizing: border-box;
     }
 
     /* --- 一番上のヘッダー画像 --- */
-    .header-image {
-      width: 100%;
-      line-height: 0; /* 画像下の不要な隙間を消す */
-    }
-
     .header-image img {
-      width: 100%;      /* 画面幅いっぱいに表示 */
-      height: auto;     /* 縦横比を維持 */
+      width: 100%;
+      height: auto;
       display: block;
     }
 
-    /* --- コマ画像エリア（左右に余白を設定） --- */
+    /* --- コマ画像エリア --- */
     .image-container {
-      padding: 16px;    /* 上下左右の余白 */
+      padding: 16px;     /* 左右・上下の余白 */
       box-sizing: border-box;
-      display: flex;
-      justify-content: center; /* 左右中央寄せ */
     }
 
     .image-container img {
-      width: 100%;      /* コンテナ幅に合わせて拡縮 */
-      max-width: 600px; /* 大画面で広がりすぎない上限幅 */
-      height: auto;     /* 縦横比を維持 */
+      width: 100%;
+      height: auto;
       display: block;
-      border-radius: 8px; /* 角を少し丸める場合（不要なら削除） */
+      border-radius: 8px; /* 角丸（不要なら削除） */
     }
   </style>
 </head>
 <body>
 
-  <!-- 一番上のヘッダー画像 -->
-  <header class="header-image">
-    <img src="hed.png" alt="ヘッダー画像">
-  </header>
+  <!-- PC時に横幅を揃えるラッパー -->
+  <div class="wrapper">
 
-  <!-- コマ画像（両サイド調整） -->
-  <main class="image-container">
-    <img src="koma.png" alt="コマ画像">
-  </main>
+    <!-- ヘッダー画像 -->
+    <header class="header-image">
+      <img src="hed.png" alt="ヘッダー画像">
+    </header>
+
+    <!-- コマ画像 -->
+    <main class="image-container">
+      <img src="koma.png" alt="コマ画像">
+    </main>
+
+  </div>
 
 </body>
 </html>
