@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- スマホ表示に必須のメタタグ -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ハピチャリ4コマ</title>
+  <title>スマホページ</title>
   <style>
     body {
       margin: 0;
@@ -12,29 +12,46 @@
       background-color: #f4f4f4; /* 背景色（好みで変更可） */
     }
 
-    /* 画像を囲むコンテナ（ここで左右の余白を制御） */
+    /* --- 一番上のヘッダー画像 --- */
+    .header-image {
+      width: 100%;
+      line-height: 0; /* 画像下の不要な隙間を消す */
+    }
+
+    .header-image img {
+      width: 100%;      /* 画面幅いっぱいに表示 */
+      height: auto;     /* 縦横比を維持 */
+      display: block;
+    }
+
+    /* --- コマ画像エリア（左右に余白を設定） --- */
     .image-container {
-      padding: 16px;       /* 上下左右の余白（16pxを自由に変更） */
+      padding: 16px;    /* 上下左右の余白 */
       box-sizing: border-box;
       display: flex;
       justify-content: center; /* 左右中央寄せ */
     }
 
-    /* 画像自体のスタイル */
     .image-container img {
-      width: 100%;         /* コンテナ幅に合わせて拡大・縮小 */
-      max-width: 600px;    /* PCなど大画面で広がりすぎない上限幅 */
-      height: auto;        /* アスペクト比を維持 */
+      width: 100%;      /* コンテナ幅に合わせて拡縮 */
+      max-width: 600px; /* 大画面で広がりすぎない上限幅 */
+      height: auto;     /* 縦横比を維持 */
       display: block;
-      border-radius: 8px;  /* 角を少し丸める場合（不要なら削除） */
+      border-radius: 8px; /* 角を少し丸める場合（不要なら削除） */
     }
   </style>
 </head>
 <body>
 
-  <div class="image-container">
+  <!-- 一番上のヘッダー画像 -->
+  <header class="header-image">
+    <img src="hed.png" alt="ヘッダー画像">
+  </header>
+
+  <!-- コマ画像（両サイド調整） -->
+  <main class="image-container">
     <img src="koma.png" alt="コマ画像">
-  </div>
+  </main>
 
 </body>
 </html>
