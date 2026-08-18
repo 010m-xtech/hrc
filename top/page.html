@@ -311,11 +311,12 @@
 
     .description-container {
       width: 530px;
-      background-color: rgba(255, 255, 255, 0.95);
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      
+      background-color: transparent; /* 背景を透明に（白背景を残したい場合は #ffffff に） */
+      border: none;                  /* 枠線を削除 */
+      box-shadow: none;              /* 影を削除 */
+      
+      padding: 10px 0;               /* 上下の余白のみ調整 */
       box-sizing: border-box;
       color: #1e293b;
     }
