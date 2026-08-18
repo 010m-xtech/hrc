@@ -20,13 +20,60 @@
       overflow-x: hidden;
     }
 
-    /* 全要素を包むレスポンシブ・スケーラー */
+    /* --- オープニング動画コンテナ --- */
+    #video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #ffffff;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease;
+      opacity: 1;
+    }
+
+    #opening-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: #ffffff;
+    }
+
+    /* 動画再生を促すタップオーバーレイ（ブラウザの自動再生ブロック対策） */
+    #tap-to-start {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333333;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10000;
+    }
+
+    /* --- メインコンテンツのフェードイン設定 --- */
     .app-scaler {
       width: 572px;
       display: flex;
       flex-direction: column;
       align-items: center;
       transform-origin: top center;
+      opacity: 0; /* 最初は非表示 */
+      transition: opacity 1.2s ease; /* 白画面からのフェードイン */
+    }
+
+    .app-scaler.fade-in {
+      opacity: 1;
     }
 
     /* 1. ビールジョッキのキャンバス枠（w572 x h1024） */
@@ -336,6 +383,18 @@
 </head>
 <body>
 
+  <!-- オープニング動画用オーバーレイ -->
+  <div id="video-overlay">
+    <video id="opening-video" playsinline webkit-playsinline preload="auto">
+      <source src="https://010m-xtech.github.io/hrc/チャリティ動画.mp4" type="video/mp4">
+      お使いのブラウザは動画再生に対応していません。
+    </video>
+    <!-- ブラウザの自動再生制限で停止した場合のフォールバック用タップ領域 -->
+    <div id="tap-to-start" style="display: none;">
+      画面をタップしてスタート
+    </div>
+  </div>
+
   <!-- 全体を自動縮小するレスポンシブ・スケーラー -->
   <div class="app-scaler" id="appScaler">
 
@@ -453,8 +512,13 @@
     const wrapper = document.getElementById('beerFullWrapper');
     const scaler = document.getElementById('appScaler');
     
+    const videoOverlay = document.getElementById('video-overlay');
+    const openingVideo = document.getElementById('opening-video');
+    const tapToStart = document.getElementById('tap-to-start');
+
     let dustParticles = [];
     let animationFrameId = null;
+    let mainAppStarted = false;
 
     /**
      * スマホ画面幅に合わせて自動縮小フィットさせる処理
@@ -635,7 +699,7 @@
     }
 
     /**
-     * ページアクセス時の自動アニメーション実行
+     * ビールアニメーション＆数値演出の開始
      */
     function runFullAnimation() {
       const bubble = document.getElementById('speechBubble');
@@ -659,8 +723,62 @@
       });
     }
 
+    /**
+     * 動画終了後に画面を切り替えてメインコンテンツを表示
+     */
+    function transitionToMainApp() {
+      if (mainAppStarted) return;
+      mainAppStarted = true;
+
+      // 動画オーバーレイを非表示に
+      videoOverlay.style.opacity = '0';
+      
+      // メインコンテンツを白画面からフェードイン
+      scaler.classList.add('fade-in');
+
+      setTimeout(() => {
+        videoOverlay.style.display = 'none';
+        // メインコンテンツが表示されたらビール等のアニメーションを開始
+        runFullAnimation();
+      }, 800); // 動画フェードアウト時間に合わせてスタート
+    }
+
+    // 動画再生制御（自動再生ブロックへの対応）
+    function initVideo() {
+      // 動画の終了イベント
+      openingVideo.addEventListener('ended', transitionToMainApp);
+
+      // 動画のフェードアウト（動画の最後0.5秒前に準備）
+      openingVideo.addEventListener('timeupdate', () => {
+        if (openingVideo.duration && (openingVideo.duration - openingVideo.currentTime <= 0.6)) {
+          scaler.classList.add('fade-in');
+        }
+      });
+
+      // エラー時や読み込み失敗時は直接メイン画面へ
+      openingVideo.addEventListener('error', transitionToMainApp);
+
+      // 自動再生の試行
+      const playPromise = openingVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // ブラウザの自動再生ポリシーでブロックされた場合、音声オフ（muted）で再試行するか、タップを促す
+          openingVideo.muted = true;
+          openingVideo.play().catch(() => {
+            tapToStart.style.display = 'flex';
+          });
+        });
+      }
+    }
+
+    // タップで動画再生＆フルスクリーン解除等
+    tapToStart.addEventListener('click', () => {
+      tapToStart.style.display = 'none';
+      openingVideo.play().catch(transitionToMainApp);
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(runFullAnimation, 100);
+      initVideo();
     });
   </script>
 </body>
