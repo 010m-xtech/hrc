@@ -466,47 +466,54 @@
     // =========================================================
     // 【ログ送信設定】STEP 1で取得したGASのURLを貼り付けてください
     // =========================================================
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9L4FGdHtBzln6xDBE-YxGkE_Z4FEPt3oWTyQ08VmODW7lAnmnIPPHNUI_H_p1mrVPnQ/exec";
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
-    /**
-     * デバイスIDの取得または新規発行 (UUID v4形式)
-     */
-    function getOrCreateDeviceId() {
-      let deviceId = localStorage.getItem('hrc_device_id');
-      if (!deviceId) {
-        deviceId = 'dev_' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-          return v.toString(16);
-        });
-        localStorage.setItem('hrc_device_id', deviceId);
-      }
-      return deviceId;
+/**
+ * デバイスIDの取得または新規発行
+ */
+function getOrCreateDeviceId() {
+  try {
+    let deviceId = localStorage.getItem('hrc_device_id');
+    if (!deviceId) {
+      deviceId = 'dev_' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      localStorage.setItem('hrc_device_id', deviceId);
     }
+    return deviceId;
+  } catch (e) {
+    return 'dev_unknown_browser';
+  }
+}
 
-    const DEVICE_ID = getOrCreateDeviceId();
+const DEVICE_ID = getOrCreateDeviceId();
 
-    /**
-     * スプレッドシートへログを送信する関数
-     */
-    function sendAccessLog(actionName) {
-      if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) return;
+/**
+ * ログ送信処理（CORSエラー対策・確実な送信設定）
+ */
+function sendAccessLog(actionName) {
+  if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) {
+    console.warn("GAS URLが設定されていません");
+    return;
+  }
 
-      const payload = {
-        deviceId: DEVICE_ID,
-        action: actionName
-      };
+  const payload = {
+    deviceId: DEVICE_ID,
+    action: actionName
+  };
 
-      // ページ離脱時の取りこぼしを防ぐため fetch keepalive を使用
-      fetch(GAS_WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(err => console.error('Log error:', err));
-    }
+  // CORSエラーを回避するため text/plain で送信
+  fetch(GAS_WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    body: JSON.stringify(payload),
+    keepalive: true
+  }).catch(err => console.error('Log fetch error:', err));
+}
 
     // =========================================================
     // 設定エリア
