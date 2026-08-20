@@ -43,7 +43,6 @@
       background-color: #ffffff;
     }
 
-    /* 動画再生を促すタップオーバーレイ（ブラウザの自動再生ブロック対策） */
     #tap-to-start {
       position: absolute;
       top: 0;
@@ -68,15 +67,14 @@
       flex-direction: column;
       align-items: center;
       transform-origin: top center;
-      opacity: 0; /* 最初は非表示 */
-      transition: opacity 1.2s ease; /* 白画面からのフェードイン */
+      opacity: 0;
+      transition: opacity 1.2s ease;
     }
 
     .app-scaler.fade-in {
       opacity: 1;
     }
 
-    /* 1. ビールジョッキのキャンバス枠（w572 x h1024） */
     #beer-container {
       width: 572px;
       height: 1024px;
@@ -84,7 +82,6 @@
       overflow: hidden;
     }
 
-    /* ジョッキの上の黄色い横長情報ボード */
     .info-board {
       position: absolute;
       top: 50px;
@@ -182,7 +179,6 @@
       pointer-events: none;
     }
 
-    /* --- 子どもの画像の配置設定 --- */
     .kid-img {
       position: absolute;
       height: auto;
@@ -199,7 +195,6 @@
     .kid5 { width: 19%; top: 470px; right: 30px; transform: rotate(-10deg); }
     .kid6 { width: 16%; top: 650px; right: 60px; transform: rotate(12deg); }
 
-    /* kid1の右側に表示する吹き出しコンテナ */
     .speech-bubble-wrapper {
       position: absolute;
       top: 210px;
@@ -278,7 +273,6 @@
       opacity: 0;
     }
 
-    /* 2. リンクボタンコンテナの設定 */
     .menu-button-container {
       width: 530px;
       display: flex;
@@ -308,7 +302,6 @@
       cursor: pointer;
     }
 
-    /* 各ボタンの個別の背景色設定（上から下へグラデーション変化） */
     .btn-color-1 { background-color: #FFF082; }
     .btn-color-2 { background-color: #FFE56E; }
     .btn-color-3 { background-color: #FEDB5A; }
@@ -339,7 +332,6 @@
       margin-left: 10px;
     }
 
-    /* 3. チャリティ説明＆hedコンテナ（最下部エリア） */
     .footer-section {
       width: 530px;
       display: flex;
@@ -389,18 +381,13 @@
       <source src="https://010m-xtech.github.io/hrc/チャリティ動画.mp4" type="video/mp4">
       お使いのブラウザは動画再生に対応していません。
     </video>
-    <!-- ブラウザの自動再生制限で停止した場合のフォールバック用タップ領域 -->
     <div id="tap-to-start" style="display: none;">
       画面をタップしてスタート
     </div>
   </div>
 
-  <!-- 全体を自動縮小するレスポンシブ・スケーラー -->
   <div class="app-scaler" id="appScaler">
-
-    <!-- 1. ジョッキ＆演出コンテナ -->
     <div id="beer-container">
-
       <div class="info-board">
         <div class="campaign-period">キャンペーン期間 2026.10.1～2027.2.28</div>     
         <div class="target-amount-label">目標金額：<span id="displayTargetAmount">4,500,000</span>円</div>     
@@ -411,18 +398,12 @@
         </div>
       </div>
 
-      <!-- 奥：空のジョッキ -->
       <img src="beermug_empty.webp" alt="空のジョッキ" class="beer-image beer-empty">
-
-      <!-- 中：満杯のビール -->
       <div class="beer-full-wrapper" id="beerFullWrapper">
         <img src="beermug_full.webp" alt="満杯のビール">
       </div>
-
-      <!-- 手前：ロゴ画像 -->
       <img src="beermug_rogo.png" alt="ロゴ" class="beer-logo">
 
-      <!-- 子どもの画像（6人分） -->
       <img src="kid1.png" alt="子ども1" class="kid-img kid1">
       <img src="kid2.png" alt="子ども2" class="kid-img kid2">
       <img src="kid3.png" alt="子ども3" class="kid-img kid3">
@@ -430,7 +411,6 @@
       <img src="kid5.png" alt="子ども5" class="kid-img kid5">
       <img src="kid6.png" alt="子ども6" class="kid-img kid6">
 
-      <!-- kid1の右側に表示される吹き出し -->
       <div class="speech-bubble-wrapper" id="speechBubble">
         <img src="hukidashi.png" alt="吹き出し" class="speech-bubble-img">
         <div class="speech-bubble-text">
@@ -439,69 +419,102 @@
         </div>
       </div>
 
-      <!-- 最手前：演出用の星 -->
       <div id="main-star">★</div>
     </div>
 
-    <!-- 2. リンクボタンコンテナ（5つのボタン：各カラー設定適用） -->
+    <!-- リンクボタン（onclickイベントを追加） -->
     <div class="menu-button-container">
-      <!-- 1つ目：#F6F61A -->
-      <a href="https://010m-xtech.github.io/hrc/top/k_syokudou.html" class="action-btn btn-color-1" target="_blank" rel="noopener noreferrer">
+      <a href="https://010m-xtech.github.io/hrc/top/k_syokudou.html" class="action-btn btn-color-1" target="_blank" rel="noopener noreferrer" onclick="sendAccessLog('ボタン「子ども食堂」')">
         <span class="btn-text">☺ 子ども食堂とは</span>
         <span class="btn-arrow">›</span>
       </a>
 
-      <!-- 2つ目：#FCEC00 -->
-      <a href="https://010m-xtech.github.io/hrc/top/description.html" class="action-btn btn-color-2" target="_blank" rel="noopener noreferrer">
+      <a href="https://010m-xtech.github.io/hrc/top/description.html" class="action-btn btn-color-2" target="_blank" rel="noopener noreferrer" onclick="sendAccessLog('ボタン「ハピチャリ」')">
         <span class="btn-text">❤ ハッピーリングチャリティとは</span>
         <span class="btn-arrow">›</span>
       </a>
 
-      <!-- 3つ目：#F2F200 -->
-      <a href="https://010m-xtech.github.io/hrc/games/quiz.html" class="action-btn btn-color-3" target="_blank" rel="noopener noreferrer">
+      <a href="https://010m-xtech.github.io/hrc/games/quiz.html" class="action-btn btn-color-3" target="_blank" rel="noopener noreferrer" onclick="sendAccessLog('ボタン「クイズ」')">
         <span class="btn-text">？ ハッピーリングチャリティクイズ！</span>
         <span class="btn-arrow">›</span>
       </a>
 
-      <!-- 4つ目：#F2EA00 -->
-      <a href="https://www.happy-ring-charity.com/" class="action-btn btn-color-4" target="_blank" rel="noopener noreferrer">
+      <a href="https://www.happy-ring-charity.com/" class="action-btn btn-color-4" target="_blank" rel="noopener noreferrer" onclick="sendAccessLog('ボタン「公式サイト」')">
         <span class="btn-text">🔍︎ ハッピーリングチャリティ公式サイトへ</span>
         <span class="btn-arrow">›</span>
       </a>
 
-      <!-- 5つ目：#F2C200 -->
-      <a href="https://www.happy-ring-charity.com/%E5%AF%BE%E8%B1%A1%E5%BA%97%E8%88%97%E4%B8%80%E8%A6%A7" class="action-btn btn-color-5" target="_blank" rel="noopener noreferrer">
+      <a href="https://www.happy-ring-charity.com/%E5%AF%BE%E8%B1%A1%E5%BA%97%E8%88%97%E4%B8%80%E8%A6%A7" class="action-btn btn-color-5" target="_blank" rel="noopener noreferrer" onclick="sendAccessLog('ボタン「参加店」')">
         <span class="btn-text">🍴︎ ハッピーリングチャリティ参加飲食店を探す</span>
         <span class="btn-arrow">›</span>
       </a>
     </div>
 
-    <!-- 3. 最下部：hed.png ＆ チャリティ説明コンテナ -->
     <div class="footer-section">
       <div class="header-container">
         <img src="hed.png" alt="ヘッダー" class="header-image">
       </div>
-
       <div class="description-container">
         <p class="description-text">
           当キャンペーンは東海三県の飲食店様へ業務用食品・酒類を販売している㈱マルト水谷により開催されています。お取引先の飲食店様と共に地域の未来を担う子ども達の悩みや不安を解消し、ひとりでも多くの子どもに笑顔を届けたい。私たちが飲食店で提供している生ビールが地域の子ども食堂や子どもの問題解決に取り組む団体を通じて子ども達の支援へとつながります。
         </p>
       </div>
     </div>
-
-  </div><!-- /app-scaler -->
+  </div>
 
   <script>
     // =========================================================
-    // 【設定エリア】運用時は以下の数値を書き換えてください
+    // 【ログ送信設定】STEP 1で取得したGASのURLを貼り付けてください
     // =========================================================
-    const CURRENT_AMOUNT     = 4500000; // 現在の寄付金額（数値のみ）
-    const TARGET_AMOUNT      = 4500000; // 目標金額（数値のみ）
-    const ANIMATION_SECONDS  = 2.0;     // 演出時間（秒）
-    
-    // 目標進捗（％）
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+
+    /**
+     * デバイスIDの取得または新規発行 (UUID v4形式)
+     */
+    function getOrCreateDeviceId() {
+      let deviceId = localStorage.getItem('hrc_device_id');
+      if (!deviceId) {
+        deviceId = 'dev_' + 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+        localStorage.setItem('hrc_device_id', deviceId);
+      }
+      return deviceId;
+    }
+
+    const DEVICE_ID = getOrCreateDeviceId();
+
+    /**
+     * スプレッドシートへログを送信する関数
+     */
+    function sendAccessLog(actionName) {
+      if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) return;
+
+      const payload = {
+        deviceId: DEVICE_ID,
+        action: actionName
+      };
+
+      // ページ離脱時の取りこぼしを防ぐため fetch keepalive を使用
+      fetch(GAS_WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(err => console.error('Log error:', err));
+    }
+
+    // =========================================================
+    // 設定エリア
+    // =========================================================
+    const CURRENT_AMOUNT     = 4500000;
+    const TARGET_AMOUNT      = 4500000;
+    const ANIMATION_SECONDS  = 2.0;
     const TARGET_PERCENT = (CURRENT_AMOUNT / TARGET_AMOUNT) * 100;
-    // =========================================================
 
     const LOGO_X = 275;
     const LOGO_Y = 538;
@@ -520,9 +533,6 @@
     let animationFrameId = null;
     let mainAppStarted = false;
 
-    /**
-     * スマホ画面幅に合わせて自動縮小フィットさせる処理
-     */
     function autoScaleApp() {
       const BASE_WIDTH = 572;
       const windowWidth = window.innerWidth;
@@ -531,7 +541,6 @@
       if (windowWidth < BASE_WIDTH) {
         const scale = (windowWidth - padding) / BASE_WIDTH;
         scaler.style.transform = `scale(${scale})`;
-        
         const totalBaseHeight = (1024 - 140) + 365 + 160 + 150; 
         const scaledHeight = totalBaseHeight * scale;
         document.body.style.height = `${scaledHeight + 60}px`;
@@ -544,13 +553,10 @@
     window.addEventListener('resize', autoScaleApp);
     autoScaleApp();
 
-    // 初期化：目標金額＆吹き出しの％数値をセット
     document.getElementById('displayTargetAmount').textContent = TARGET_AMOUNT.toLocaleString('ja-JP');
-    
     const displayPercentStr = (Math.round(TARGET_PERCENT * 10) / 10) + '%';
     document.getElementById('bubblePercentVal').textContent = displayPercentStr;
 
-    // ピクシーダスト初期生成
     for (let i = 0; i < DUST_COUNT; i++) {
       const dust = document.createElement('div');
       dust.classList.add('star-dust');
@@ -565,18 +571,15 @@
       });
     }
 
-    /**
-     * ビールの高さを設定する関数
-     */
     function setBeerProgress(percent) {
       let p = parseFloat(percent);
       if (isNaN(p)) p = 0;
       if (p < 0) p = 0;
       if (p > 100) p = 100;
 
-      const y0 = 766;      // 0% のY座標
-      const y100 = 265;    // 100% (フチ) のY座標
-      const yFoamTop = 0;  // あふれた泡のてっぺんY座標
+      const y0 = 766;
+      const y100 = 265;
+      const yFoamTop = 0;
       const totalHeight = 1024;
 
       let currentY;
@@ -592,9 +595,6 @@
       wrapper.style.clipPath = `inset(${topClip}px 0px ${bottomClip}px 0px)`;
     }
 
-    /**
-     * 現在の寄付金額を下1桁から順番に表示する演出関数
-     */
     function animateCurrentAmount() {
       const amountContainer = document.getElementById('displayCurrentAmount');
       const formattedStr = CURRENT_AMOUNT.toLocaleString('ja-JP');
@@ -624,9 +624,6 @@
       });
     }
 
-    /**
-     * 星のアニメーション関数
-     */
     function startStarAnimation() {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
@@ -698,9 +695,6 @@
       animationFrameId = requestAnimationFrame(update);
     }
 
-    /**
-     * ビールアニメーション＆数値演出の開始
-     */
     function runFullAnimation() {
       const bubble = document.getElementById('speechBubble');
       bubble.classList.remove('show');
@@ -723,46 +717,41 @@
       });
     }
 
-    /**
-     * 動画終了後に画面を切り替えてメインコンテンツを表示
-     */
     function transitionToMainApp() {
       if (mainAppStarted) return;
       mainAppStarted = true;
 
-      // 動画オーバーレイを非表示に
+      // 「トップページ表示」のログを送信
+      sendAccessLog('トップページ表示');
+
       videoOverlay.style.opacity = '0';
-      
-      // メインコンテンツを白画面からフェードイン
       scaler.classList.add('fade-in');
 
       setTimeout(() => {
         videoOverlay.style.display = 'none';
-        // メインコンテンツが表示されたらビール等のアニメーションを開始
         runFullAnimation();
-      }, 800); // 動画フェードアウト時間に合わせてスタート
+      }, 800);
     }
 
-    // 動画再生制御（自動再生ブロックへの対応）
     function initVideo() {
-      // 動画の終了イベント
+      openingVideo.addEventListener('play', () => {
+        // 「アクセス（動画再生）」のログを送信
+        sendAccessLog('アクセス（動画再生）');
+      });
+
       openingVideo.addEventListener('ended', transitionToMainApp);
 
-      // 動画のフェードアウト（動画の最後0.5秒前に準備）
       openingVideo.addEventListener('timeupdate', () => {
         if (openingVideo.duration && (openingVideo.duration - openingVideo.currentTime <= 0.6)) {
           scaler.classList.add('fade-in');
         }
       });
 
-      // エラー時や読み込み失敗時は直接メイン画面へ
       openingVideo.addEventListener('error', transitionToMainApp);
 
-      // 自動再生の試行
       const playPromise = openingVideo.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // ブラウザの自動再生ポリシーでブロックされた場合、音声オフ（muted）で再試行するか、タップを促す
           openingVideo.muted = true;
           openingVideo.play().catch(() => {
             tapToStart.style.display = 'flex';
@@ -771,7 +760,6 @@
       }
     }
 
-    // タップで動画再生＆フルスクリーン解除等
     tapToStart.addEventListener('click', () => {
       tapToStart.style.display = 'none';
       openingVideo.play().catch(transitionToMainApp);
