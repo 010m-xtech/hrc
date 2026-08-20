@@ -4,6 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ハピチャリとは</title>
+
+  <script>
+  // STEP 1で取得した同じGASのURLをセット
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9L4FGdHtBzln6xDBE-YxGkE_Z4FEPt3oWTyQ08VmODW7lAnmnIPPHNUI_H_p1mrVPnQ/exec";
+
+  // ローカルストレージから同じ端末IDを取得
+  function getDeviceId() {
+    return localStorage.getItem('hrc_device_id') || 'Unknown';
+  }
+
+  // ログ送信処理
+  function sendAccessLog(actionName) {
+    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("YOUR_SCRIPT_ID")) return;
+
+    fetch(GAS_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        deviceId: getDeviceId(),
+        action: actionName
+      }),
+      keepalive: true
+    }).catch(err => console.error(err));
+  }
+
+  // 「活動報告」ボタンへのイベント設定例
+  document.addEventListener('DOMContentLoaded', () => {
+    // 例: 「活動報告」ボタンの要素を取得してクリックイベントを設定
+    // ※ 実際のHTMLのIDやクラス名・リンクに合わせて調整してください
+    const reportBtn = document.querySelector('a[href*="活動報告"]'); 
+    if (reportBtn) {
+      reportBtn.addEventListener('click', () => {
+        sendAccessLog('ボタン「活動報告」');
+      });
+    }
+  });
+</script>
+  
   <style>
     * {
       margin: 0;
